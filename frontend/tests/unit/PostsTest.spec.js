@@ -2,6 +2,7 @@ import {mount, createLocalVue} from '@vue/test-utils'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import Posts from "../../src/components/Posts.vue";
+import { post } from '../../../backend/routes/posts';
 
 const localVue = createLocalVue();
 
@@ -96,11 +97,42 @@ jest.mock("axios", () => ({
     })
 }));
 
+// Task 4
 describe('Posts', () => {
 
     const wrapper = mount(Posts, {router, store, localVue});
 
     it('1 == 1', function () {
+        const posts = wrapper.findAll('.post')
+
+        expect(posts.length).toBe(testData.length)
+
+        for (let i = 0; i < posts.length; i++) {
+            const postHtml = posts.at(i)
+            const postData = testData[i]
+
+            console.log({postHtml})
+
+            const postImage = postHtml.find('.post-image')
+            const author = postHtml.find('.post-author')
+            expect(author.exists()).toBe(true)
+
+            const createdAtEl = postHtml.find('.post-author > small')
+            expect(createdAtEl.exists()).toBe(true)
+
+            expect(createdAtEl.text()).toBe('Saturday, December 5, 2020 1:53 PM')
+
+            // image or video tags are rendered depending on media.type property, or if media property is absent nothing is rendered.
+            expect(postImage.exists()).toBe(postData.media ? true : false)
+
+            if (postData.media) {
+                expect(postImage.find('img').exists()).toBe(postData.media.type === 'image')
+                expect(postImage.find('video').exists()).toBe(postData.media.type === 'video')
+            }
+            
+
+        }
+
         expect(true).toBe(true)
     });
 });
