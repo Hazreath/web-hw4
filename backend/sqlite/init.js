@@ -1,4 +1,4 @@
-const db = require('./connection');
+const db = require('./connection.js');
 db.serialize(() => {
     db
         .run(`
